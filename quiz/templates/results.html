@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 70% 20%, #20203a, #0a0a18);
+            padding: 30px;
+            color: #e0e0ff;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .results-card {
+            background: rgba(20,20,40,0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            animation: scaleIn 0.6s ease;
+        }
+
+        @keyframes scaleIn {
+            from { opacity:0; transform:scale(0.9); }
+            to { opacity:1; transform:scale(1); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #c084fc, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subhead {
+            font-size: 1.3rem;
+            color: #b0b0ff;
+            margin-bottom: 40px;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.03);
+            padding: 30px 40px;
+            border-radius: 40px;
+            text-align: center;
+            min-width: 200px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #b0b0ff;
+        }
+
+        .questions-review {
+            margin: 40px 0;
+        }
+
+        .question-item {
+            background: rgba(255,255,255,0.02);
+            border-radius: 30px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 8px solid;
+            transition: 0.3s;
+        }
+
+        .question-item.correct {
+            border-left-color: #10b981;
+        }
+
+        .question-item.incorrect {
+            border-left-color: #ef4444;
+        }
+
+        .question-item h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .answer-row {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .answer-badge {
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+
+        .correct-badge {
+            background: #10b981;
+            color: white;
+        }
+
+        .incorrect-badge {
+            background: #ef4444;
+            color: white;
+        }
+
+        .explanation {
+            background: rgba(255,255,255,0.03);
+            padding: 15px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            color: #c0c0ff;
+            font-style: italic;
+        }
+
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #a855f7, #3b82f6);
+            color: white;
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #a855f7;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #a855f7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="results-card">
+            <h1><i class="fas fa-trophy"></i> Quiz Completed</h1>
+            <div class="subhead">{{ student_name }}, here's how you did:</div>
+
+           <div class="stats-grid">
+    <div class="stat-item">
+        <div class="stat-number">{{ correct_count }}/{{ question_count }}</div>
+        <div class="stat-label">Correct</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ accuracy|floatformat:1 }}%</div>
+        <div class="stat-label">Accuracy</div>
+    </div>
+</div>
+            <div class="questions-review">
+                <h2 style="margin-bottom:20px;"><i class="fas fa-list"></i> Detailed Review</h2>
+                {% for item in quiz_results %}
+                <div class="question-item {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
+                    <h3>{{ forloop.counter }}. {{ item.question.text }}</h3>
+                    <div class="answer-row">
+                        <span><strong>Your answer:</strong> 
+                            <span class="answer-badge {% if item.is_correct %}correct-badge{% else %}incorrect-badge{% endif %}">
+                                {{ item.response }}
+                            </span>
+                        </span>
+                        <span><strong>Correct:</strong> {{ item.correct_answer }}</span>
+                    </div>
+                    <div class="explanation">
+                        <i class="fas fa-info-circle"></i> {{ item.explanation }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'student_dashboard' student_id %}" class="btn"><i class="fas fa-chart-line"></i> View Profile</a>
+                <a href="{% url 'home' %}" class="btn btn-outline"><i class="fas fa-home"></i> Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

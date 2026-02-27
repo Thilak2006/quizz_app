@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ student.name }} | Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 80% 10%, #1f1b3a, #0d0b1a);
+            color: #e0e0ff;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated grid overlay */
+        body::after {
+            content: '';
+            position: absolute;
+            top:0; left:0; width:100%; height:100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            animation: gridMove 15s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0,0); }
+            100% { transform: translate(25px,25px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Profile header */
+        .profile-header {
+            background: rgba(30,30,60,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #a855f7, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            box-shadow: 0 20px 40px #a855f7;
+        }
+
+        .profile-info h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .profile-info p {
+            font-size: 1.2rem;
+            color: #b0b0ff;
+        }
+
+        /* Cards grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: rgba(20,20,40,0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: #a855f7;
+            box-shadow: 0 0 30px rgba(168,85,247,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .topic-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #a855f7;
+        }
+
+        .topic-item h4 {
+            font-size: 1.4rem;
+            color: #c084fc;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #3b82f6);
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .accuracy-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background: rgba(168,85,247,0.2);
+            border-radius: 15px 15px 0 0;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .badge-correct {
+            background: #10b981;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+
+        .badge-incorrect {
+            background: #ef4444;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #a855f7, #3b82f6);
+            color: white;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px #a855f7;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #a855f7;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: #a855f7;
+            color: black;
+        }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Profile header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="profile-info">
+                <h1>{{ student.name }}</h1>
+                <p><i class="fas fa-calendar-alt"></i> Last activity: {{ student.last_updated|slice:":16" }}</p>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Left: Performance by Topic -->
+            <div class="card">
+                <h3><i class="fas fa-chart-pie"></i> Topic Mastery</h3>
+                {% for topic, data in performance.topics.items %}
+                <div class="topic-item">
+                    <h4>{{ topic }}</h4>
+                    <div class="accuracy-text">{{ data.accuracy|floatformat:1 }}% ({{ data.correct }}/{{ data.total }})</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ data.accuracy|floatformat:1 }}%"></div>
+                    </div>
+                </div>
+                {% empty %}
+                <p style="opacity:0.7;">No data yet. Take a quiz!</p>
+                {% endfor %}
+            </div>
+
+            <!-- Right: Quiz History -->
+            <div class="card">
+                <h3><i class="fas fa-history"></i> Recent Responses</h3>
+                <table>
+                    <thead><tr><th>Question</th><th>Topic</th><th>Result</th></tr></thead>
+                    <tbody>
+                        {% for response in responses %}
+                        <tr>
+                            <td>{{ response.question_text|truncatechars:40 }}</td>
+                            <td>{{ response.topic }}</td>
+                            <td>
+                                {% if response.correct %}
+                                <span class="badge-correct"><i class="fas fa-check"></i> Correct</span>
+                                {% else %}
+                                <span class="badge-incorrect"><i class="fas fa-times"></i> Incorrect</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center">No responses yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="actions">
+                    <a href="{% url 'start_quiz' student.id %}" class="btn"><i class="fas fa-play"></i> New Quiz</a>
+                    <a href="{% url 'home' %}" class="btn btn-outline"><i class="fas fa-home"></i> Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
